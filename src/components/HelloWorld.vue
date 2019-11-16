@@ -64,9 +64,8 @@ export default {
 
       // Loading model
       loader.load(
-        // resource URL
         "https://s3-us-west-2.amazonaws.com/s.cdpn.io/39255/ladybug.gltf",
-        // called when the resource is loaded
+        // We need to use arrow functions otherwise "this" refers to loader and not the Vue instance
         gltf => {
           // this.scene.add(gltf.scene);
 
@@ -103,14 +102,11 @@ export default {
 
       this.controls.enableDamping = true;
       this.controls.dampingFactor = 0.05;
-
-      this.controls.addEventListener("change", this.renderer);
-      // this.controls.update()
     },
     animate() {
       requestAnimationFrame(this.animate);
       // console.log(this.scene)
-      // this.controls.update();
+      this.controls.update();
       this.renderer.render(this.scene, this.camera);
     }
   },
@@ -123,8 +119,8 @@ export default {
 
 <style scoped>
 #container {
-  width: 50vw;
-  height: 50vh;
-  margin: 0 auto;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
 }
 </style>
