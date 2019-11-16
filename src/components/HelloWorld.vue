@@ -3,14 +3,16 @@
 </template>
 
 <script>
-import * as Three from "three";
+import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import OrbitControls from "three-orbitcontrols";
 
 export default {
   name: "HelloWorld",
   data() {
     return {
       camera: null,
+      controls: null,
       scene: null,
       renderer: null,
       mesh: null,
@@ -26,11 +28,11 @@ export default {
       // loader.crossOrigin = true;
 
       // Scene
-      this.scene = new Three.Scene();
-      // this.scene.background = new Three.Color(0xdddddd);
+      this.scene = new THREE.Scene();
+      // this.scene.background = new THREE.Color(0xdddddd);
 
       // Camera
-      this.camera = new Three.PerspectiveCamera(
+      this.camera = new THREE.PerspectiveCamera(
         80,
         window.innerWidth / window.innerHeight,
         0.1,
@@ -39,24 +41,24 @@ export default {
       this.camera.position.set(5, 5, 5);
 
       // Lights
-      // this.hlight = new Three.AmbientLight(0x404040, 100);
+      // this.hlight = new THREE.AmbientLight(0x404040, 100);
       // this.scene.add(this.hlight);
-      this.light = new Three.PointLight(0xffffcc, 20, 200);
+      this.light = new THREE.PointLight(0xffffcc, 20, 200);
       this.light.position.set(4, 30, -20);
       this.scene.add(this.light);
 
-      this.light2 = new Three.AmbientLight(0x20202a, 20, 100);
+      this.light2 = new THREE.AmbientLight(0x20202a, 20, 100);
       this.light2.position.set(30, -10, 30);
       this.scene.add(this.light2);
 
       // Rendering
-      this.renderer = new Three.WebGLRenderer({ antialias: true });
+      this.renderer = new THREE.WebGLRenderer({ antialias: true });
       this.renderer.setSize(container.clientWidth, container.clientHeight);
       // Specific to bug model (https://codepen.io/shshaw/pen/yPPOEg)
-      this.renderer.toneMapping = Three.LinearToneMapping;
+      this.renderer.toneMapping = THREE.LinearToneMapping;
       this.renderer.toneMappingExposure = Math.pow(0.94, 5.0);
       this.renderer.shadowMap.enabled = true;
-      this.renderer.shadowMap.type = Three.PCFShadowMap;
+      this.renderer.shadowMap.type = THREE.PCFShadowMap;
 
       container.appendChild(this.renderer.domElement);
 
@@ -88,10 +90,27 @@ export default {
           console.error(error);
         }
       );
+      // Controls
+      this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+      this.controls.rotateSpeed = 0.3;
+      this.controls.zoomSpeed = 0.9;
+
+      this.controls.minDistance = 3;
+      this.controls.maxDistance = 20;
+
+      this.controls.minPolarAngle = 0; // radians
+      this.controls.maxPolarAngle = Math.PI / 2; // radians
+
+      this.controls.enableDamping = true;
+      this.controls.dampingFactor = 0.05;
+
+      this.controls.addEventListener("change", this.renderer);
+      // this.controls.update()
     },
     animate() {
       requestAnimationFrame(this.animate);
       // console.log(this.scene)
+      // this.controls.update();
       this.renderer.render(this.scene, this.camera);
     }
   },
