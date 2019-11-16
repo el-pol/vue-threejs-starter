@@ -14,34 +14,50 @@ export default {
       scene: null,
       renderer: null,
       mesh: null,
-      hlight: null
+      hlight: null,
+      light: null,
+      ligh2: null
     };
   },
   methods: {
     init() {
       let container = document.getElementById("container");
       let loader = new GLTFLoader();
+      // loader.crossOrigin = true;
 
       // Scene
       this.scene = new Three.Scene();
-      this.scene.background = new Three.Color(0xdddddd);
+      // this.scene.background = new Three.Color(0xdddddd);
 
       // Camera
       this.camera = new Three.PerspectiveCamera(
-        70,
-        container.clientWidth / container.clientHeight,
-        0.01,
-        10
+        80,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        800
       );
-      this.camera.position.z = 1;
+      this.camera.position.set(5, 5, 5);
 
       // Lights
-      this.hlight = new Three.AmbientLight(0x404040, 100);
-      this.scene.add(this.hlight);
+      // this.hlight = new Three.AmbientLight(0x404040, 100);
+      // this.scene.add(this.hlight);
+      this.light = new Three.PointLight(0xffffcc, 20, 200);
+      this.light.position.set(4, 30, -20);
+      this.scene.add(this.light);
+
+      this.light2 = new Three.AmbientLight(0x20202a, 20, 100);
+      this.light2.position.set(30, -10, 30);
+      this.scene.add(this.light2);
 
       // Rendering
       this.renderer = new Three.WebGLRenderer({ antialias: true });
       this.renderer.setSize(container.clientWidth, container.clientHeight);
+      // Specific to bug model (https://codepen.io/shshaw/pen/yPPOEg)
+      this.renderer.toneMapping = Three.LinearToneMapping;
+      this.renderer.toneMappingExposure = Math.pow(0.94, 5.0);
+      this.renderer.shadowMap.enabled = true;
+      this.renderer.shadowMap.type = Three.PCFShadowMap;
+
       container.appendChild(this.renderer.domElement);
 
       // Loading model
@@ -49,7 +65,7 @@ export default {
         // resource URL
         "https://s3-us-west-2.amazonaws.com/s.cdpn.io/39255/ladybug.gltf",
         // called when the resource is loaded
-        function(gltf) {
+        gltf => {
           // this.scene.add(gltf.scene);
 
           // gltf.animations; // Array<THREE.AnimationClip>
@@ -58,21 +74,24 @@ export default {
           // gltf.cameras; // Array<THREE.Camera>
           // gltf.asset; // Object
           console.log(gltf.scene);
+          var object = gltf.scene;
+          object.position.set(1, -5, -0.75);
           // let car = gltf.scene.children[0];
           // car.scale.set(0.5, 0.5, 0.5);
-          this.scene.add(gltf.scene);
+          this.scene.add(object);
           this.animate();
         },
-        function(xhr) {
+        xhr => {
           console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
         },
-        function(error) {
-          console.log(error, "An error happened");
+        error => {
+          console.error(error);
         }
       );
     },
     animate() {
       requestAnimationFrame(this.animate);
+      // console.log(this.scene)
       this.renderer.render(this.scene, this.camera);
     }
   },
