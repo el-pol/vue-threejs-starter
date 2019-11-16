@@ -4,6 +4,7 @@
 
 <script>
 import * as Three from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 export default {
   name: "HelloWorld",
@@ -12,13 +13,20 @@ export default {
       camera: null,
       scene: null,
       renderer: null,
-      mesh: null
+      mesh: null,
+      hlight: null
     };
   },
   methods: {
     init() {
       let container = document.getElementById("container");
+      let loader = new GLTFLoader();
 
+      // Scene
+      this.scene = new Three.Scene();
+      this.scene.background = new Three.Color(0xdddddd);
+
+      // Camera
       this.camera = new Three.PerspectiveCamera(
         70,
         container.clientWidth / container.clientHeight,
@@ -27,22 +35,44 @@ export default {
       );
       this.camera.position.z = 1;
 
-      this.scene = new Three.Scene();
+      // Lights
+      this.hlight = new Three.AmbientLight(0x404040, 100);
+      this.scene.add(this.hlight);
 
-      let geometry = new Three.BoxGeometry(0.2, 0.2, 0.2);
-      let material = new Three.MeshNormalMaterial();
-
-      this.mesh = new Three.Mesh(geometry, material);
-      this.scene.add(this.mesh);
-
+      // Rendering
       this.renderer = new Three.WebGLRenderer({ antialias: true });
       this.renderer.setSize(container.clientWidth, container.clientHeight);
       container.appendChild(this.renderer.domElement);
+
+      // Loading model
+      loader.load(
+        // resource URL
+        "https://s3-us-west-2.amazonaws.com/s.cdpn.io/39255/ladybug.gltf",
+        // called when the resource is loaded
+        function(gltf) {
+          // this.scene.add(gltf.scene);
+
+          // gltf.animations; // Array<THREE.AnimationClip>
+          // gltf.scene; // THREE.Scene
+          // gltf.scenes; // Array<THREE.Scene>
+          // gltf.cameras; // Array<THREE.Camera>
+          // gltf.asset; // Object
+          console.log(gltf.scene);
+          // let car = gltf.scene.children[0];
+          // car.scale.set(0.5, 0.5, 0.5);
+          this.scene.add(gltf.scene);
+          this.animate();
+        },
+        function(xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+        },
+        function(error) {
+          console.log(error, "An error happened");
+        }
+      );
     },
     animate() {
       requestAnimationFrame(this.animate);
-      this.mesh.rotation.x += 0.01;
-      this.mesh.rotation.y += 0.02;
       this.renderer.render(this.scene, this.camera);
     }
   },
