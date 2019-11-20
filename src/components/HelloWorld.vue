@@ -54,6 +54,8 @@ export default {
         canvas: document.getElementById("canvas"),
         antialias: true
       });
+      this.renderer.setClearColor(0x2f8e76);
+      this.renderer.setPixelRatio(window.devicePixelRatio);
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       // Specific to bug model (https://codepen.io/shshaw/pen/yPPOEg)
       // this.renderer.toneMapping = THREE.LinearToneMapping;
