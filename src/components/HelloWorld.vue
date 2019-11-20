@@ -1,5 +1,5 @@
 <template>
-  <div id="container"></div>
+  <canvas id="canvas"></canvas>
 </template>
 
 <script>
@@ -23,9 +23,7 @@ export default {
   },
   methods: {
     init() {
-      let container = document.getElementById("container");
       let loader = new GLTFLoader();
-      // loader.crossOrigin = true;
 
       // Scene
       this.scene = new THREE.Scene();
@@ -52,15 +50,16 @@ export default {
       this.scene.add(this.light2);
 
       // Rendering
-      this.renderer = new THREE.WebGLRenderer({ antialias: true });
-      this.renderer.setSize(container.clientWidth, container.clientHeight);
+      this.renderer = new THREE.WebGLRenderer({
+        canvas: document.getElementById("canvas"),
+        antialias: true
+      });
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
       // Specific to bug model (https://codepen.io/shshaw/pen/yPPOEg)
-      this.renderer.toneMapping = THREE.LinearToneMapping;
-      this.renderer.toneMappingExposure = Math.pow(0.94, 5.0);
-      this.renderer.shadowMap.enabled = true;
-      this.renderer.shadowMap.type = THREE.PCFShadowMap;
-
-      container.appendChild(this.renderer.domElement);
+      // this.renderer.toneMapping = THREE.LinearToneMapping;
+      // this.renderer.toneMappingExposure = Math.pow(0.94, 5.0);
+      // this.renderer.shadowMap.enabled = true;
+      // this.renderer.shadowMap.type = THREE.PCFShadowMap;
 
       // Loading model
       loader.load(
@@ -76,7 +75,7 @@ export default {
           // gltf.asset; // Object
           console.log(gltf.scene);
           var object = gltf.scene;
-          object.position.set(1, -5, -0.75);
+          // object.position.set(1, -5, -0.75);
           // let car = gltf.scene.children[0];
           // car.scale.set(0.5, 0.5, 0.5);
           this.scene.add(object);
@@ -118,9 +117,4 @@ export default {
 </script>
 
 <style scoped>
-#container {
-  width: 100vw;
-  height: 100vh;
-  margin: 0;
-}
 </style>
