@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import ThreeJSContainer from "./components/ThreeJSContainer.vue";
 
 export default {
   name: "app",
