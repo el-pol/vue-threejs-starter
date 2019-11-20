@@ -8,7 +8,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import OrbitControls from "three-orbitcontrols";
 
 export default {
-  name: "HelloWorld",
+  name: "ThreeJSContainer",
   data() {
     return {
       camera: null,
